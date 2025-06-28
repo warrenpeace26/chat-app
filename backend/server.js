@@ -9,7 +9,6 @@ import {Server} from 'socket.io';
 
 const app = express()
 const server = http.createServer(app)
-const port = process.env.PORT || 5000
 
 // Initialize socted.io
 export const io = new Server(server, {
@@ -51,7 +50,12 @@ app.use("/api/messages", messageRouter);
 // connect database
 await db();
 
-
-server.listen(port, ()=>{
+if(process.env.NODE_ENV !== "production"){
+const port = process.env.PORT || 5000
+  server.listen(port, ()=>{
     console.log(`server is connected on ${port}`)
 } );
+}
+
+// Export server for vercel
+export default server;
