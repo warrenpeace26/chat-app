@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import assets from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
-import { AuthContext } from '../../context/authContext';
-import { ChatContext } from '../../context/chatContext';
+import { AuthContext } from '../context/authContext';
+import { ChatContext } from '../context/chatContext';
 
 const Sidebar = () => {
   const {getUsers, users, setSelectedUser, selectedUser, unseenMessages, setUnSeenMessages} = useContext(ChatContext);

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import assets from '../assets/assets'
-import { ChatContext } from '../../context/chatContext';
-import { AuthContext } from '../../context/authContext';
+import { ChatContext } from '../context/chatContext';
+import { AuthContext } from '../context/authContext';
 import toast from 'react-hot-toast';
 
 const RightSidebar = () => {
