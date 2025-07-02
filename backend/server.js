@@ -13,7 +13,7 @@ const server = http.createServer(app)
 // Initialize socted.io
 export const io = new Server(server, {
     cors: {origin: "*"}
-})
+})  
 
 // Store online users
 export const userSocketMap = {};  // {userID: socketId}
@@ -39,7 +39,22 @@ io.on("connection", (socket) => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({limit:"4mb"}));
-app.use(cors());
+const allowedOrigins = [
+  "https://chat-app-one-omega-88.vercel.app",  // your frontend
+  "http://localhost:5173" // for local dev (optional)
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+}));
 
 // Routes setup
 app.use("/api/auth", userRouter);
