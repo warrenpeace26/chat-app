@@ -5,24 +5,24 @@ import http from "http";
 import { db } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
-import {Server} from 'socket.io';
+import { Server } from "socket.io";
 
-const app = express()
-const server = http.createServer(app)
+const app = express();
+const server = http.createServer(app);
 
-// Initialize socted.io
+// ✅ Correct CORS for socket.io
 export const io = new Server(server, {
-    cors: {origin: "*"}
-})  
+  cors: {
+    origin: 'https://chat-app-one-omega-88.vercel.app',
+    credentials: true
+  }
+});
 
-// Store online users
-export const userSocketMap = {};  // {userID: socketId}
+// ✅ Store userSocketMap
+export const userSocketMap = {};
 
-// Socket.io connection handler
 io.on("connection", (socket) => {
-  console.log("🔍 Full socket handshake auth:", socket.handshake.auth);
-
-  const userId = socket.handshake.query.userId;  // ✅ Correct way
+  const userId = socket.handshake.query.userId;
   console.log("User connected:", userId);
 
   if (userId) userSocketMap[userId] = socket.id;
@@ -36,41 +36,28 @@ io.on("connection", (socket) => {
   });
 });
 
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json({limit:"4mb"}));
-const allowedOrigins = [
-  "https://chat-app-one-omega-88.vercel.app",  // your frontend
-  "http://localhost:5173" // for local dev (optional)
-];
-
+// ✅ Apply CORS to Express app
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
+  origin: 'https://chat-app-one-omega-88.vercel.app',
+  credentials: true
 }));
 
-// Routes setup
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "4mb" }));
+
+// ✅ Routes
 app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
 
-
-
-// connect database
+// ✅ DB and Start Server
 await db();
 
-if(process.env.NODE_ENV !== "production"){
-const port = process.env.PORT || 5000
-  server.listen(port, ()=>{
-    console.log(`server is connected on ${port}`)
-} );
+if (process.env.NODE_ENV !== "production") {
+  const port = process.env.PORT || 5000;
+  server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 }
 
-// Export server for vercel
+// ✅ Export server for Vercel
 export default server;
