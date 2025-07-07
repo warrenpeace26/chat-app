@@ -4,6 +4,7 @@ import { formatMessageTime } from '../lib/utils.js';
 import { ChatContext } from '../context/chatContext.jsx';
 import { AuthContext } from '../context/authContext.jsx';
 import toast from 'react-hot-toast';
+import RightSidebar from './RightSidebar'; // ✅ Import RightSidebar
 
 const ChatContainer = () => {
   const {
@@ -18,7 +19,8 @@ const ChatContainer = () => {
   const [input, setInput] = useState('');
   const scrollEnd = useRef();
 
-  // Send text message
+  const [showRightSidebar, setShowRightSidebar] = useState(false);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (input.trim() === '') return;
@@ -26,7 +28,6 @@ const ChatContainer = () => {
     setInput('');
   };
 
-  // Send image message
   const handleSendImage = async (e) => {
     const file = e.target.files[0];
     if (!file || !file.type.startsWith('image/')) {
@@ -78,12 +79,24 @@ const ChatContainer = () => {
             <span className="w-2 h-2 rounded-full bg-green-500" />
           )}
         </p>
+
+        {/* Back button on mobile */}
         <img
           onClick={() => setSelectedUser(null)}
           src={assets.arrow_icon}
           alt="back"
           className="md:hidden max-w-7 cursor-pointer"
         />
+
+        {/* Info button for RightSidebar (Mobile only) */}
+        <button
+          className="md:hidden text-xs bg-gray-700 px-2 py-1 rounded hover:bg-gray-600"
+          onClick={() => setShowRightSidebar(true)}
+        >
+          Info
+        </button>
+
+        {/* Help icon (Desktop only) */}
         <img
           src={assets.help_icon}
           alt="help"
@@ -174,6 +187,23 @@ const ChatContainer = () => {
           />
         </div>
       </div>
+
+      {/* RightSidebar Fullscreen (Mobile Only) */}
+      {showRightSidebar && (
+        <div className="fixed inset-0 z-50 bg-[#0f0f1ce6] backdrop-blur-md md:hidden flex flex-col">
+          <div className="flex justify-end p-4">
+            <button
+              className="text-sm bg-gray-700 px-3 py-1 rounded"
+              onClick={() => setShowRightSidebar(false)}
+            >
+              Close
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <RightSidebar mobile={true} onClose={() => setShowRightSidebar(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

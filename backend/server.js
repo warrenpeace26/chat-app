@@ -13,7 +13,7 @@ const server = http.createServer(app);
 // ✅ Correct CORS for socket.io
 export const io = new Server(server, {
   cors: {
-    origin: 'https://chat-app-one-omega-88.vercel.app',
+    origin: ['https://chat-app-one-omega-88.vercel.app',   "http://localhost:5173" ],
     credentials: true
   }
 });
@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
 
 // ✅ Apply CORS to Express app
 app.use(cors({
-  origin: 'https://chat-app-one-omega-88.vercel.app',
+  origin: ['https://chat-app-one-omega-88.vercel.app',   "http://localhost:5173" ],
   credentials: true
 }));
 
@@ -52,12 +52,10 @@ app.use("/api/messages", messageRouter);
 // ✅ DB and Start Server
 await db();
 
-if (process.env.NODE_ENV !== "production") {
-  const port = process.env.PORT || 5000;
-  server.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
-}
+const port = process.env.PORT || 5000;
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 // ✅ Export server for Vercel
 export default server;
